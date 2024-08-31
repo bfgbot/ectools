@@ -1,0 +1,13 @@
+[project]
+name = "ectools"
+version = "0.1.0"
+description = "A set of tools for managing EC2 instances"
+readme = "README.md"
+dependencies = ["boto3", "pydantic"]
+
+[project.scripts]
+hello = "ectools:hello"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
