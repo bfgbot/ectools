@@ -1,7 +1,7 @@
 import boto3
 import random
 import string
-from pydantic import BaseModel
+from typing import TypedDict
 
 _ec2 = None
 
@@ -52,17 +52,18 @@ def new_instances(template_name, count, group_name=None, **overrides) -> list[st
 
     return [instance["InstanceId"] for instance in response["Instances"]]
 
+
 def _get_group_name(tags):
     for tag in tags:
         if tag["Key"] == "group":
             return tag["Value"]
 
 
-class InstanceStatus(BaseModel):
+class InstanceStatus(TypedDict):
     instance_id: str
     group_name: str
     ip: str
-    ready: bool  # Indicates if the instance is in the 'running' state
+    ready: bool
 
 
 def get_latest_status() -> list[InstanceStatus]:
@@ -82,15 +83,14 @@ def get_latest_status() -> list[InstanceStatus]:
             ready = instance["State"]["Name"] == "running"
             tags = instance["Tags"]
             group_name = _get_group_name(tags)
-            instances.append(
-                InstanceStatus(
-                    instance_id=instance_id,
-                    group_name=group_name,
-                    ip=ip,
-                    ready=ready,
-                )
-            )
+            instances.append({
+                "instance_id": instance_id,
+                "group_name": group_name,
+                "ip": ip,
+                "ready": ready,
+            })
     return instances
+
 
 def terminate_instances(instances: list[str]) -> None:
     """
