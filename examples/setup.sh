@@ -12,7 +12,11 @@ source $HOME/.cargo/env
 uv venv --python cpython-3.12.5-linux-x86_64-gnu
 source .venv/bin/activate
 
+# install superfetch
+wget https://github.com/bfgbot/superfetch/releases/download/test/superfetch -O /tmp/superfetch
+chmod +x /tmp/superfetch
+
 uv pip install rq
-tmux new-session -d -s ws_1 'rq worker --url redis://ip-172-31-31-165'
+tmux new-session -d -s ws_1 'rq worker superfetch --url redis://ip-172-31-31-165'
 
 EOF
